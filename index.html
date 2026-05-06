@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de Facu | Altos QRs</title>
+
+  <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f3f2ef;
+      --panel: #ffffff;
+      --ink: #0d1735;
+      --muted: #5e6b80;
+      --soft-border: #d9dfe8;
+      --accent: #efd43b;
+      --shadow: #171717;
+      --success: #22c55e;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .display-font {
+      font-family: 'Lora', serif;
+    }
+
+    .hard-shadow {
+      box-shadow: 6px 8px 0 var(--shadow);
+    }
+
+    .field-surface {
+      background: var(--panel);
+      border: 3px solid var(--shadow);
+    }
+
+    .pill {
+      background: rgba(255, 255, 255, 0.76);
+      border: 2px solid var(--soft-border);
+      border-radius: 9999px;
+    }
+
+    #qrcode img {
+      margin: 0 auto;
+      border-radius: 18px;
+      box-shadow: 0 16px 32px rgba(13, 23, 53, 0.12);
+    }
+
+    .page-shell {
+      min-height: 100vh;
+      min-height: 100dvh;
+      align-items: flex-start;
+      padding-top: clamp(0.75rem, 3.5vh, 1.5rem);
+      padding-bottom: 1rem;
+    }
+
+    .soft-reveal {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: soft-reveal 520ms ease-out forwards;
+    }
+
+    .soft-reveal-delay {
+      opacity: 0;
+      transform: translateY(8px);
+      animation: soft-reveal 620ms ease-out 90ms forwards;
+    }
+
+    @keyframes soft-reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body class="page-shell flex justify-center px-3 md:items-center md:p-8">
+  <main class="soft-reveal w-full max-w-xl px-4 py-1 md:px-8 md:py-3">
+    <header class="soft-reveal-delay text-center mb-5 md:mb-8">
+      <div class="inline-flex items-center justify-center w-14 h-14 md:w-20 md:h-20 rounded-full bg-[#ece3ba] mb-5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 md:h-12 md:w-12 text-[#1f1909]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+        </svg>
+      </div>
+      <h1 class="display-font text-[1.65rem] md:text-6xl font-semibold leading-[1.1] tracking-[-0.03em] text-[var(--ink)] max-w-[12ch] mx-auto">
+        Tranqui, <span class="text-[var(--ink)]">Facu</span> te genera <span class="whitespace-nowrap">un&nbsp;QR</span>
+      </h1>
+      <h3 class="mt-2 text-[1.05rem] md:text-[1.75rem] leading-[1.4] font-light text-[var(--muted)] max-w-md mx-auto">
+        F&aacute;cil, gratis y para siempre.
+      </h3>
+    </header>
+
+    <form id="qr-form" class="space-y-5">
+      <div class="relative">
+        <label for="url" class="block text-[0.95rem] md:text-lg font-semibold uppercase tracking-[0.01em] mb-2 text-[var(--ink)]">Ingresa la URL</label>
+        <input
+          type="text"
+          id="url"
+          placeholder="https://www.ejemplo.com"
+          class="field-surface hard-shadow w-full px-5 py-4 text-base md:text-xl text-[var(--muted)] placeholder:text-slate-400 focus:outline-none focus:ring-0 focus:border-[var(--shadow)]"
+        >
+      </div>
+
+      <button
+        type="button"
+        id="generate"
+        class="hard-shadow w-full border-[3px] border-[var(--shadow)] bg-[var(--accent)] text-[var(--shadow)] font-extrabold text-lg md:text-2xl py-4 transition-transform active:translate-y-[2px] active:shadow-none"
+      >
+        Generar QR
+      </button>
+    </form>
+
+    <div id="qrcode-container" class="mt-7 hidden pt-3">
+      <div id="qrcode" class="flex justify-center mb-4"></div>
+
+      <button
+        type="button"
+        id="download-jpg"
+        class="w-full pill text-[var(--ink)] font-semibold py-3.5 text-base md:text-lg transition-colors hover:bg-white flex items-center justify-center gap-2"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+        Descargar JPG
+      </button>
+    </div>
+
+    <div class="mt-7 flex flex-wrap justify-center gap-3 md:gap-5">
+      <div class="pill flex items-center gap-2.5 px-4 py-2 text-base md:text-lg text-[var(--shadow)]">
+        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--success)] text-white text-[0.7rem] font-bold">&#10003;</span>
+        <span>100% Gratis</span>
+      </div>
+      <div class="pill flex items-center gap-2.5 px-4 py-2 text-base md:text-lg text-[var(--shadow)]">
+        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--success)] text-white text-[0.7rem] font-bold">&#10003;</span>
+        <span>Sin registro</span>
+      </div>
+      <div class="pill flex items-center gap-2.5 px-4 py-2 text-base md:text-lg text-[var(--shadow)]">
+        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[var(--success)] text-white text-[0.7rem] font-bold">&#10003;</span>
+        <span>Uso ilimitado</span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const urlInput = document.getElementById('url');
+    const generateButton = document.getElementById('generate');
+    const downloadButton = document.getElementById('download-jpg');
+    const qrContainer = document.getElementById('qrcode');
+    const qrSection = document.getElementById('qrcode-container');
+
+    generateButton.addEventListener('click', () => {
+      const url = urlInput.value;
+
+      if (isValidURL(url)) {
+        qrContainer.innerHTML = '';
+        qrSection.classList.remove('hidden');
+
+        new QRCode(qrContainer, {
+          text: url,
+          width: 256,
+          height: 256,
+          colorDark: "#0f172a",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+
+        qrSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        alert('Por favor, ingresa una URL v\u00E1lida.');
+      }
+    });
+
+    downloadButton.addEventListener('click', () => {
+      const qrImage = qrContainer.querySelector('img');
+      if (!qrImage) return;
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const size = 256;
+
+      canvas.width = size;
+      canvas.height = size;
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, size, size);
+
+      ctx.drawImage(qrImage, 0, 0, size, size);
+
+      const jpgUrl = canvas.toDataURL("image/jpeg", 0.9);
+      const downloadLink = document.createElement("a");
+      downloadLink.href = jpgUrl;
+      downloadLink.download = "codigo-qr-facu.jpg";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    });
+
+    function isValidURL(str) {
+      const pattern = new RegExp('^(https?:\\/\\/)?' +
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+        '((\\d{1,3}\\.){3}\\d{1,3}))' +
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+        '(\\?[;&a-z\\d%_.~+=-]*)?' +
+        '(\\#[-a-z\\d_]*)?$', 'i');
+      return pattern.test(str);
+    }
+
+    urlInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        generateButton.click();
+      }
+    });
+  </script>
+</body>
+</html>
