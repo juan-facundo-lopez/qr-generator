@@ -3,6 +3,8 @@ GeneraQR
 GeneraQR is a lightweight web application that allows users to instantly generate custom QR codes from text, links, or other input data.
 The project focuses on simplicity, speed, and a clean user experience, making QR creation accessible without unnecessary complexity.
 
+Live demo https://unkiwi.com.ar/generaqr/
+
 Features
 Generate QR codes instantly
 Clean and responsive interface
